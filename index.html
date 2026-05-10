@@ -67,16 +67,19 @@
     <h1 class="text-6xl font-black tracking-widest mb-12 drop-shadow-lg text-white">TETRYL</h1>
     <div class="flex flex-col gap-3 w-64">
         <button onclick="startGame(60)" class="btn-primary py-3 rounded-xl uppercase tracking-widest text-sm shadow-xl shadow-sky-500/20">Bullet</button>
-        <div class="flex gap-2">
-            <button onclick="startGame('cheese')" class="btn-danger py-3 rounded-xl uppercase tracking-widest text-xs flex-1 shadow-xl shadow-rose-500/20">Cheese?</button>
-            <button onclick="startGame('spike')" class="btn-danger py-3 rounded-xl uppercase tracking-widest text-xs flex-1 shadow-xl shadow-red-500/20">Spike!</button>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="startGame('quicksort')" class="btn-primary py-3 rounded-xl uppercase tracking-widest text-[10px] flex-1 shadow-xl shadow-purple-500/20" style="background-color: #a855f7;">Quicksort</button>
-            <button onclick="startGame('livesort')" class="btn-primary py-3 rounded-xl tracking-widest text-[10px] flex-1 shadow-xl shadow-fuchsia-500/20" style="background-color: #a855f7;">quICksOrT</button>
-        </div>
+        
+        <button onclick="startGame('cheese')" class="btn-danger py-3 rounded-xl uppercase tracking-widest text-sm shadow-xl shadow-rose-500/20">Cheese?</button>
+        
+        <button onclick="startGame('spike')" class="btn-danger py-3 rounded-xl uppercase tracking-widest text-sm shadow-xl shadow-red-500/20">Spike!</button>
+        
+        <button onclick="startGame('quicksort')" class="btn-primary py-3 rounded-xl uppercase tracking-widest text-sm shadow-xl shadow-purple-500/20" style="background-color: #a855f7;">Quicksort</button>
+        
+        <button onclick="startGame('livesort')" class="btn-primary py-3 rounded-xl tracking-widest text-sm shadow-xl shadow-fuchsia-500/20" style="background-color: #a855f7;">quICksOrT</button>
+        
         <button onclick="startGame('phantom')" class="btn-primary py-3 rounded-xl uppercase tracking-widest text-sm shadow-xl shadow-indigo-500/20" style="background-color: #6366f1;">Phantom</button>
+        
         <button onclick="startGame('zen')" class="btn-primary py-3 rounded-xl uppercase tracking-widest text-sm shadow-xl shadow-sky-500/20" style="background-color: #d946ef;">Zen Mode</button>
+        
         <button onclick="document.getElementById('settingsModal').classList.remove('hidden')" class="glass font-black py-3 rounded-xl uppercase tracking-widest text-sm mt-2 hover:bg-white/10 transition-colors">Settings</button>
     </div>
 </div>
