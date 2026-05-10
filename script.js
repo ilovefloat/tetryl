@@ -26,7 +26,14 @@ let lastSwap = {a: -1, b: -1};
 let zenHistoryUndo = [];
 let zenHistoryRedo = [];
 
-const savedSettings = JSON.parse(localStorage.getItem('tetryl_config')) || {};
+let savedSettings = {};
+try {
+    const cache = localStorage.getItem('tetryl_config');
+    if (cache) savedSettings = JSON.parse(cache);
+} catch (e) {
+    console.error("Could not load settings from cache:", e);
+}
+
 const config = { 
     das: savedSettings.das !== undefined ? savedSettings.das : 167, 
     arr: savedSettings.arr !== undefined ? savedSettings.arr : 33, 
@@ -35,11 +42,14 @@ const config = {
     lockDelay: 400 
 };
 
-// Immediately update the HTML input boxes so they show your saved numbers
-if (document.getElementById('dasInput')) document.getElementById('dasInput').value = config.das;
-if (document.getElementById('arrInput')) document.getElementById('arrInput').value = config.arr;
-if (document.getElementById('dcdInput')) document.getElementById('dcdInput').value = config.dcd;
-if (document.getElementById('sdsInput')) document.getElementById('sdsInput').value = config.sds;
+// Wait for the entire page to finish loading, THEN update the visual input boxes!
+window.addEventListener('load', () => {
+    if (document.getElementById('dasInput')) document.getElementById('dasInput').value = config.das;
+    if (document.getElementById('arrInput')) document.getElementById('arrInput').value = config.arr;
+    if (document.getElementById('dcdInput')) document.getElementById('dcdInput').value = config.dcd;
+    if (document.getElementById('sdsInput')) document.getElementById('sdsInput').value = config.sds;
+});
+// ----------------------------
 
 let dasTimer = 0, arrTimer = 0, dcdTimer = 0, sdsTimer = 0, keysDown = {}, lastMoveKey = null;
 let hardDropLocked = false, lockResetCount = 0;
@@ -1393,7 +1403,6 @@ function togglePause() {
 }
 
 function saveSettings() {
-    // Read the values, but use isNaN to allow "0" to be saved properly!
     let newDas = parseInt(document.getElementById('dasInput').value);
     config.das = isNaN(newDas) ? 167 : newDas;
 
@@ -1406,9 +1415,14 @@ function saveSettings() {
     let newSds = parseInt(document.getElementById('sdsInput').value);
     config.sds = isNaN(newSds) ? 0 : newSds;
     
-    // Save to the browser's persistent memory
-    localStorage.setItem('tetryl_config', JSON.stringify(config));
+    // Safely save to the browser's persistent memory
+    try {
+        localStorage.setItem('tetryl_config', JSON.stringify(config));
+    } catch (e) {
+        console.error("Failed to save to local storage:", e);
+    }
     
-    // Close the menu
+    // Close the menu and unfocus the button so hitting space doesn't reopen it
     document.getElementById('settingsModal').classList.add('hidden');
+    document.activeElement.blur(); 
 }
