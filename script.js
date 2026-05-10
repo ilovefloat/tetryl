@@ -646,9 +646,9 @@ function evaluateLineClears(phantomColorOverride, isFromHold) {
             if (currentPiece.type === 'T') {
                 let spinText = "";
                 if (linesCleared === 1) {
-                    spinText = currentPiece.spinType === "MINI" ? "T-SPIN MINI SINGLE" : "T-SPIN SINGLE";
+                    spinText = currentPiece.spinType === "MINI" ? "T-SPIN MINI" : "T-SPIN SINGLE";
                 } else if (linesCleared === 2) {
-                    spinText = currentPiece.spinType === "MINI" ? "T-SPIN MINI DOUBLE" : "T-SPIN DOUBLE";
+                    spinText = currentPiece.spinType === "MINI" ? "T-SPIN MINI" : "T-SPIN DOUBLE";
                 } else if (linesCleared === 3) {
                     spinText = "T-SPIN TRIPLE";
                 }
