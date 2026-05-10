@@ -1155,8 +1155,8 @@ function handleInput(dt) {
     } else {
         sdsTimer = config.sds; // When released, prime the timer so the next tap drops instantly
     }
-    }
 }
+
 
 window.onkeydown = (e) => {
     if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Space"].indexOf(e.code) > -1) { e.preventDefault(); }
