@@ -26,8 +26,8 @@ let lastSwap = {a: -1, b: -1};
 let zenHistoryUndo = [];
 let zenHistoryRedo = [];
 
-const config = { das: 167, arr: 33, dcd: 33, lockDelay: 400 };
-let dasTimer = 0, arrTimer = 0, dcdTimer = 0, keysDown = {}, lastMoveKey = null;
+const config = { das: 167, arr: 33, dcd: 33, sds: 0, lockDelay: 400 };
+let dasTimer = 0, arrTimer = 0, dcdTimer = 0, sdsTimer = 0, keysDown = {}, lastMoveKey = null;
 let hardDropLocked = false, lockResetCount = 0;
 
 const COLORS = { I: '#22d3ee', J: '#2563eb', L: '#f97316', O: '#facc15', S: '#22c55e', T: '#a855f7', Z: '#ef4444' };
@@ -1133,8 +1133,28 @@ function handleInput(dt) {
         }
     }
     if (keysDown['ArrowDown']) {
-        let moved = false; while(!currentPiece.collision(0, 1)) { currentPiece.y++; score += 1; moved = true; }
-        if (moved) { sound.playDropTick(); lockTimer = 0; } 
+        if (config.sds === 0) {
+            // 0ms = Instant Sonic Drop
+            let moved = false; 
+            while(!currentPiece.collision(0, 1)) { currentPiece.y++; score += 1; moved = true; }
+            if (moved) { sound.playDropTick(); lockTimer = 0; } 
+        } else {
+            // Greater than 0ms = Timed Smooth Drop
+            sdsTimer += dt;
+            if (sdsTimer >= config.sds) {
+                let drops = Math.floor(sdsTimer / config.sds);
+                sdsTimer = sdsTimer % config.sds; // Keep remainder for smooth frame pacing
+                let moved = false;
+                for (let i = 0; i < drops; i++) {
+                    if (!currentPiece.collision(0, 1)) { currentPiece.y++; score += 1; moved = true; }
+                    else break;
+                }
+                if (moved) { sound.playDropTick(); lockTimer = 0; }
+            }
+        }
+    } else {
+        sdsTimer = config.sds; // When released, prime the timer so the next tap drops instantly
+    }
     }
 }
 
@@ -1362,5 +1382,6 @@ function saveSettings() {
     config.das = parseInt(document.getElementById('dasInput').value) || 167;
     config.arr = parseInt(document.getElementById('arrInput').value) || 33;
     config.dcd = parseInt(document.getElementById('dcdInput').value) || 33;
+    config.sds = parseInt(document.getElementById('sdsInput').value) || 0;
     document.getElementById('settingsModal').classList.add('hidden');
 }
