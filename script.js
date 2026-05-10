@@ -26,23 +26,20 @@ let lastSwap = {a: -1, b: -1};
 let zenHistoryUndo = [];
 let zenHistoryRedo = [];
 
-// Grab saved settings from the browser, or use defaults if they don't exist yet
 const savedSettings = JSON.parse(localStorage.getItem('tetryl_config')) || {};
 const config = { 
-    das: savedSettings.das ?? 167, 
-    arr: savedSettings.arr ?? 33, 
-    dcd: savedSettings.dcd ?? 33, 
-    sds: savedSettings.sds ?? 0, 
+    das: savedSettings.das !== undefined ? savedSettings.das : 167, 
+    arr: savedSettings.arr !== undefined ? savedSettings.arr : 33, 
+    dcd: savedSettings.dcd !== undefined ? savedSettings.dcd : 33, 
+    sds: savedSettings.sds !== undefined ? savedSettings.sds : 0, 
     lockDelay: 400 
 };
 
-// Update the HTML input boxes to show these saved numbers when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('dasInput').value = config.das;
-    document.getElementById('arrInput').value = config.arr;
-    document.getElementById('dcdInput').value = config.dcd;
-    document.getElementById('sdsInput').value = config.sds;
-});
+// Immediately update the HTML input boxes so they show your saved numbers
+if (document.getElementById('dasInput')) document.getElementById('dasInput').value = config.das;
+if (document.getElementById('arrInput')) document.getElementById('arrInput').value = config.arr;
+if (document.getElementById('dcdInput')) document.getElementById('dcdInput').value = config.dcd;
+if (document.getElementById('sdsInput')) document.getElementById('sdsInput').value = config.sds;
 
 let dasTimer = 0, arrTimer = 0, dcdTimer = 0, sdsTimer = 0, keysDown = {}, lastMoveKey = null;
 let hardDropLocked = false, lockResetCount = 0;
@@ -1396,10 +1393,22 @@ function togglePause() {
 }
 
 function saveSettings() {
-    config.das = parseInt(document.getElementById('dasInput').value) || 167;
-    config.arr = parseInt(document.getElementById('arrInput').value) || 33;
-    config.dcd = parseInt(document.getElementById('dcdInput').value) || 33;
-    config.sds = parseInt(document.getElementById('sdsInput').value) || 0;
+    // Read the values, but use isNaN to allow "0" to be saved properly!
+    let newDas = parseInt(document.getElementById('dasInput').value);
+    config.das = isNaN(newDas) ? 167 : newDas;
+
+    let newArr = parseInt(document.getElementById('arrInput').value);
+    config.arr = isNaN(newArr) ? 33 : newArr;
+
+    let newDcd = parseInt(document.getElementById('dcdInput').value);
+    config.dcd = isNaN(newDcd) ? 33 : newDcd;
+
+    let newSds = parseInt(document.getElementById('sdsInput').value);
+    config.sds = isNaN(newSds) ? 0 : newSds;
+    
+    // Save to the browser's persistent memory
     localStorage.setItem('tetryl_config', JSON.stringify(config));
+    
+    // Close the menu
     document.getElementById('settingsModal').classList.add('hidden');
 }
