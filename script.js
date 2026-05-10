@@ -1041,7 +1041,7 @@ function draw(dt) {
         ctx.shadowBlur = 0;
         
         let intensity = Math.min(1.0, survivalTime / 180000);
-        let maxTime = gameMode === 'spike' ? (30000 - (intensity * 26000)) : (3000 - (intensity * 1500)); 
+        let maxTime = gameMode === 'spike' ? (30000 - (intensity * 26000)) : (5000 - (intensity * 3500)); 
         let pct = Math.max(0, spikeInjectTimer / maxTime);
         
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
@@ -1289,7 +1289,7 @@ function loop(time = 0) {
             spikeRollTimer -= currentSpikeInterval;
             if (pendingSpikeLines === 0 && Math.random() < currentSpikeProb) {
                 pendingSpikeLines = Math.floor(Math.random() * 3) + 4; 
-                spikeInjectTimer = 3000 - (intensity * 1500); 
+                spikeInjectTimer = 5000 - (intensity * 3500); 
                 sound.playB2B(); 
             }
         }
