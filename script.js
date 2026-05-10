@@ -26,7 +26,24 @@ let lastSwap = {a: -1, b: -1};
 let zenHistoryUndo = [];
 let zenHistoryRedo = [];
 
-const config = { das: 167, arr: 33, dcd: 33, sds: 0, lockDelay: 400 };
+// Grab saved settings from the browser, or use defaults if they don't exist yet
+const savedSettings = JSON.parse(localStorage.getItem('tetryl_config')) || {};
+const config = { 
+    das: savedSettings.das ?? 167, 
+    arr: savedSettings.arr ?? 33, 
+    dcd: savedSettings.dcd ?? 33, 
+    sds: savedSettings.sds ?? 0, 
+    lockDelay: 400 
+};
+
+// Update the HTML input boxes to show these saved numbers when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('dasInput').value = config.das;
+    document.getElementById('arrInput').value = config.arr;
+    document.getElementById('dcdInput').value = config.dcd;
+    document.getElementById('sdsInput').value = config.sds;
+});
+
 let dasTimer = 0, arrTimer = 0, dcdTimer = 0, sdsTimer = 0, keysDown = {}, lastMoveKey = null;
 let hardDropLocked = false, lockResetCount = 0;
 
@@ -1383,5 +1400,6 @@ function saveSettings() {
     config.arr = parseInt(document.getElementById('arrInput').value) || 33;
     config.dcd = parseInt(document.getElementById('dcdInput').value) || 33;
     config.sds = parseInt(document.getElementById('sdsInput').value) || 0;
+    localStorage.setItem('tetryl_config', JSON.stringify(config));
     document.getElementById('settingsModal').classList.add('hidden');
 }
