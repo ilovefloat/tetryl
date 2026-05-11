@@ -318,7 +318,7 @@ function startGame(mode) {
     
     board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
     score = 0; lines = 0; level = 1; combo = -1; b2bActive = false; b2bCount = 0;
-    piecesPlaced = 0; survivalTime = 0; cheeseTimer = 0; spikeRollTimer = 0; 
+    piecesPlaced = 0; survivalTime = 0; Timer = 0; spikeRollTimer = 0; 
     pendingSpikeLines = 0; spikeInjectTimer = 0; sortTimer = 0;
     particles = []; floatingTexts = [];
     nextQueue = []; holdPiece = null; canHold = true;
@@ -335,7 +335,7 @@ function startGame(mode) {
     if (mode === 'zen') {
         timerCont.classList.add('hidden');
         document.getElementById('controlsHint').innerHTML = "<p>P: Pause | R: Restart<br>Ctrl+Z: Undo | Ctrl+Y: Redo</p>";
-    } else if (mode === 'cheese') {
+    } else if (mode === '') {
         timerCont.classList.remove('hidden');
         timerTitle.innerText = "Survival";
         document.getElementById('timerLabel').innerText = "0:00";
@@ -449,7 +449,7 @@ function goToMainMenu() {
 }
 
 function updateTimerDisplay() {
-    if (gameMode === 'cheese' || gameMode === 'spike') {
+    if (gameMode === '' || gameMode === 'spike') {
         document.getElementById('timerLabel').innerText = formatTime(survivalTime, false);
     } else if (gameMode !== 'zen') {
         document.getElementById('timerLabel').innerText = formatTime(timeRemaining * 1000, false);
@@ -473,7 +473,7 @@ function endGame() {
     const resSecondaryScoreContainer = document.getElementById('resSecondaryScoreContainer');
     
     if (gameMode !== 'zen') {
-        const isSurvival = (gameMode === 'cheese' || gameMode === 'spike');
+        const isSurvival = (gameMode === '' || gameMode === 'spike');
         const hsKey = `tetryl_hs_${gameMode}`;
         const finalMetric = isSurvival ? survivalTime : score;
         const prevBest = parseFloat(localStorage.getItem(hsKey) || '0');
@@ -685,8 +685,8 @@ function evaluateLineClears(phantomColorOverride, isFromHold) {
         const isAllClear = board.every(row => row.every(cell => cell === 0));
         if (isAllClear) { createFloatingText("PERFECT CLEAR", "#fbbf24"); score += 3000; sound.playAllClear(); }
 
-        // --- Cheese & Spike Defense Logic ---
-        if ((gameMode === 'cheese' || gameMode === 'spike') && pendingSpikeLines > 0) {
+        // ---  & Spike Defense Logic ---
+        if ((gameMode === '' || gameMode === 'spike') && pendingSpikeLines > 0) {
             let attack = 0;
             if (linesCleared === 1) attack = (currentPiece && currentPiece.isTechnicalSpin && !isFromHold) ? 2 : 0;
             else if (linesCleared === 2) attack = (currentPiece && currentPiece.isTechnicalSpin && !isFromHold) ? 4 : 1;
@@ -809,7 +809,7 @@ function addGarbageLines(count, isClean = false) {
     let cleanHole = Math.floor(Math.random() * COLS);
     for (let i = 0; i < count; i++) {
         let hole = isClean ? cleanHole : Math.floor(Math.random() * COLS);
-        let newRow = Array(COLS).fill('#475569'); // Gray Cheese
+        let newRow = Array(COLS).fill('#475569'); // Gray 
         newRow[hole] = 0;
         board.shift();
         board.push(newRow);
@@ -860,7 +860,7 @@ function lockPiece() {
     let nextColor = COLORS[nextQueue[0]];
     let linesCleared = evaluateLineClears(nextColor, false);
 
-    // --- Spike/Cheese Garbage Injection on Piece Lock ---
+    // --- Spike/ Garbage Injection on Piece Lock ---
     if ((gameMode === 'cheese' || gameMode === 'spike') && spikeInjectTimer <= 0 && linesCleared === 0) {
         if (pendingSpikeLines > 0) {
             let isClean = (gameMode === 'cheese'); 
@@ -1326,7 +1326,7 @@ function loop(time = 0) {
 
         if (cheeseTimer >= currentCheeseInterval) {
             cheeseTimer -= currentCheeseInterval;
-            if (Math.random() < currentCheeseProb && combo === -1) addGarbageLines(1, false);
+            if (Math.random() < currentCheeseProb) addGarbageLines(1, false);
         }
         
         if (spikeRollTimer >= currentSpikeInterval) {
