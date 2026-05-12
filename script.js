@@ -318,7 +318,7 @@ function startGame(mode) {
     
     board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
     score = 0; lines = 0; level = 1; combo = -1; b2bActive = false; b2bCount = 0;
-    piecesPlaced = 0; survivalTime = 0; Timer = 0; spikeRollTimer = 0; 
+    piecesPlaced = 0; survivalTime = 0; timeRemaining = 0; spikeRollTimer = 0; 
     pendingSpikeLines = 0; spikeInjectTimer = 0; sortTimer = 0;
     particles = []; floatingTexts = [];
     nextQueue = []; holdPiece = null; canHold = true;
@@ -332,10 +332,16 @@ function startGame(mode) {
     const timerCont = document.getElementById('timerContainer');
     const timerTitle = document.getElementById('timerTitle');
     
+    // Stop the text width from jittering/flicking when numbers change
+    const timerLabelObj = document.getElementById('timerLabel');
+    if (timerLabelObj) {
+        timerLabelObj.style.fontVariantNumeric = 'tabular-nums';
+    }
+
     if (mode === 'zen') {
         timerCont.classList.add('hidden');
         document.getElementById('controlsHint').innerHTML = "<p>P: Pause | R: Restart<br>Ctrl+Z: Undo | Ctrl+Y: Redo</p>";
-    } else if (mode === '') {
+    } else if (mode === 'cheese') {
         timerCont.classList.remove('hidden');
         timerTitle.innerText = "Survival";
         document.getElementById('timerLabel').innerText = "0:00";
@@ -449,7 +455,7 @@ function goToMainMenu() {
 }
 
 function updateTimerDisplay() {
-    if (gameMode === '' || gameMode === 'spike') {
+    if (gameMode === 'cheese' || gameMode === 'spike') {
         document.getElementById('timerLabel').innerText = formatTime(survivalTime, false);
     } else if (gameMode !== 'zen') {
         document.getElementById('timerLabel').innerText = formatTime(timeRemaining * 1000, false);
@@ -473,7 +479,7 @@ function endGame() {
     const resSecondaryScoreContainer = document.getElementById('resSecondaryScoreContainer');
     
     if (gameMode !== 'zen') {
-        const isSurvival = (gameMode === '' || gameMode === 'spike');
+        const isSurvival = (gameMode === 'cheese' || gameMode === 'spike');
         const hsKey = `tetryl_hs_${gameMode}`;
         const finalMetric = isSurvival ? survivalTime : score;
         const prevBest = parseFloat(localStorage.getItem(hsKey) || '0');
@@ -686,7 +692,7 @@ function evaluateLineClears(phantomColorOverride, isFromHold) {
         if (isAllClear) { createFloatingText("PERFECT CLEAR", "#fbbf24"); score += 3000; sound.playAllClear(); }
 
         // ---  & Spike Defense Logic ---
-        if ((gameMode === '' || gameMode === 'spike') && pendingSpikeLines > 0) {
+        if ((gameMode === 'cheese' || gameMode === 'spike') && pendingSpikeLines > 0) {
             let attack = 0;
             if (linesCleared === 1) attack = (currentPiece && currentPiece.isTechnicalSpin && !isFromHold) ? 2 : 0;
             else if (linesCleared === 2) attack = (currentPiece && currentPiece.isTechnicalSpin && !isFromHold) ? 4 : 1;
@@ -1066,7 +1072,8 @@ function draw(dt) {
         
         let intensity = Math.min(1.0, survivalTime / 180000);
         let maxTime = gameMode === 'spike' ? (30000 - (intensity * 26000)) : (5000 - (intensity * 3500)); 
-        let pct = Math.max(0, spikeInjectTimer / maxTime);
+        // Clamped percentage so progress bar doesn't extend beyond bounds
+        let pct = Math.max(0, Math.min(1.0, spikeInjectTimer / maxTime));
         
         ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
         ctx.fillRect(30, 100, canvas.width - 60, 8);
