@@ -601,18 +601,34 @@ function triggerTopOut() {
     triggerShake();
 }
 
+// A true Fisher-Yates shuffle for unbiased randomness
+function shuffleBag(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 function spawnPiece(recordState = true) {
     if (nextQueue.length < 14) {
-        const bag = Object.keys(SHAPES).sort(() => Math.random() - 0.5);
+        // Create a fresh set of 7 pieces and shuffle them properly
+        const bag = shuffleBag(Object.keys(SHAPES));
         nextQueue.push(...bag);
     }
     
     currentPiece = new Piece(nextQueue.shift());
+    
     // Spawn kick: Try pushing piece up into vanish zone if obstructed
     if (currentPiece.collision(0, 0)) {
         currentPiece.y--;
     }
-    canHold = true; dcdTimer = config.dcd; lockResetCount = 0; lockTimer = 0; dropCounter = 0;
+    
+    canHold = true; 
+    dcdTimer = config.dcd; 
+    lockResetCount = 0; 
+    lockTimer = 0; 
+    dropCounter = 0;
     
     if (recordState) saveZenState();
     
@@ -620,9 +636,10 @@ function spawnPiece(recordState = true) {
         if (gameMode === 'zen') { 
             board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
             const bc = document.getElementById('boardContainer');
-            bc.classList.remove('board-flip'); void bc.offsetWidth; bc.classList.add('board-flip');
-            currentPiece = new Piece(nextQueue.shift());
-            if (recordState) saveZenState();
+            bc.classList.remove('board-flip'); 
+            void bc.offsetWidth; 
+            bc.classList.add('board-flip');
+            spawnPiece(); // Re-spawn after clearing board in Zen
         } else { 
             triggerTopOut();
         }
