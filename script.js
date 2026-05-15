@@ -346,6 +346,7 @@ function startGame(mode) {
         timerTitle.innerText = "Survival";
         document.getElementById('timerLabel').innerText = "0:00";
         document.getElementById('controlsHint').innerHTML = "<p>P: Pause | R: Restart<br>Attack to Defend Spikes!</p>";
+        updateTimerDisplay();
     } else if (mode === 'spike') {
         timerCont.classList.remove('hidden');
         timerTitle.innerText = "Spike!";
@@ -353,6 +354,7 @@ function startGame(mode) {
         document.getElementById('controlsHint').innerHTML = "<p>P: Pause | R: Restart<br>Survive the 20-Line Spikes!</p>";
         pendingSpikeLines = 20;
         spikeInjectTimer = 30000;
+        updateTimerDisplay();
     } else if (mode === 'quicksort') {
         timerCont.classList.remove('hidden');
         timerTitle.innerText = "Timer";
