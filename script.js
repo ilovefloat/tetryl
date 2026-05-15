@@ -89,31 +89,32 @@ const sound = {
     initialized: false,
     init() {
         if (this.initialized) return;
-    
-        // Create a Limiter to catch peaks
+
+        // 1. The Master Chain: Everything goes through the Limiter
         this.limiter = new Tone.Limiter(-2).toDestination(); 
 
-        // Connect synths to the limiter instead of toDestination()
+        // 2. Initialize and CONNECT to Limiter (DO NOT use .toDestination() here)
         this.synth = new Tone.PolySynth(Tone.Synth).connect(this.limiter);
+        this.synth.set({ 
+            oscillator: { type: "triangle" }, 
+            envelope: { attack: 0.005, decay: 0.1, sustain: 0.05, release: 0.1 } 
+        });
+        this.synth.volume.value = -14; // Dropped slightly for safety
+
         this.fm = new Tone.FMSynth().connect(this.limiter);
-        this.noise = new Tone.NoiseSynth(...).connect(this.limiter);
-        this.bass = new Tone.MonoSynth(...).connect(this.limiter);
-        
-        this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
-        this.synth.set({ oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.05, release: 0.1 } });
-        this.synth.volume.value = -12;
+        this.fm.volume.value = -18; 
 
-        this.fm = new Tone.FMSynth().toDestination();
-        this.fm.volume.value = -16; 
+        this.noise = new Tone.NoiseSynth({ 
+            noise: { type: "white" }, 
+            envelope: { attack: 0.001, decay: 0.03, sustain: 0 } 
+        }).connect(this.limiter);
+        this.noise.volume.value = -20; 
 
-        this.noise = new Tone.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.03, sustain: 0 } }).toDestination();
-        this.noise.volume.value = -18; 
-        
         this.bass = new Tone.MonoSynth({ 
             oscillator: { type: "square" }, 
             envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.01 }
-        }).toDestination();
-        this.bass.volume.value = -4; 
+        }).connect(this.limiter);
+        this.bass.volume.value = -8; // Dropped from -4 to -8 to stop the Spike "thump" from clipping
 
         this.initialized = true;
     },
