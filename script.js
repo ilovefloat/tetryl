@@ -380,7 +380,7 @@ function startGame(mode) {
     }
     
     while (nextQueue.length < 14) {
-        const bag = Object.keys(SHAPES).sort(() => Math.random() - 0.5);
+        const bag = shuffleBag(Object.keys(SHAPES));
         nextQueue.push(...bag);
     }
     
