@@ -1348,9 +1348,9 @@ function loop(time = 0) {
         const intensity = Math.min(1.0, survivalTime / 180000); // Scales linearly up to 3 minutes
         
         const currentCheeseInterval = 3000 - (intensity * 1500); // 3s -> 1.5s
-        const currentSpikeInterval = 5000 - (intensity * 2000);  // 5s -> 3.0s
+        const currentSpikeInterval = 5000 - (intensity * 500);  // 5s -> 4.5s
         const currentCheeseProb = 0.30 + (intensity * 0.50);     // 30% -> 80%
-        const currentSpikeProb = 0.40 + (intensity * 0.10);      // 40% -> 50%
+        const currentSpikeProb = 0.40 + (intensity * 0.40);      // 40% -> 80%
 
         if (cheeseTimer >= currentCheeseInterval) {
             cheeseTimer -= currentCheeseInterval;
@@ -1361,7 +1361,7 @@ function loop(time = 0) {
             spikeRollTimer -= currentSpikeInterval;
             if (pendingSpikeLines === 0 && Math.random() < currentSpikeProb) {
                 pendingSpikeLines = Math.floor(Math.random() * 3) + 4; 
-                spikeInjectTimer = 5000 - (intensity * 3500); 
+                spikeInjectTimer = 5000 - (intensity * 1000); 
                 sound.playB2B(); 
             }
         }
