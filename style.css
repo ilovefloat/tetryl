@@ -56,3 +56,9 @@ body {
     100% { transform: rotateX(0deg) scale(1); opacity: 1; }
 }
 .board-flip { animation: flipBoard 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform-origin: center; }
+
+#garbageMeter { 
+    height: 0; /* Managed by JS */
+    opacity: 0; 
+    transition: height 0.15s cubic-bezier(0, 0, 0.2, 1), opacity 0.2s; 
+}
