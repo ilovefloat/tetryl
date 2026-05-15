@@ -289,7 +289,7 @@ class Piece {
 
 // Formats ms into MM:SS or MM:SS.ms
 function formatTime(ms, showMs = false) {
-    const totalSeconds = ms / 1000;
+    const totalSeconds = max(ms / 1000,0);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = Math.floor(totalSeconds % 60);
     const secStr = seconds.toString().padStart(2, '0');
