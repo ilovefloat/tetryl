@@ -89,6 +89,16 @@ const sound = {
     initialized: false,
     init() {
         if (this.initialized) return;
+    
+        // Create a Limiter to catch peaks
+        this.limiter = new Tone.Limiter(-2).toDestination(); 
+
+        // Connect synths to the limiter instead of toDestination()
+        this.synth = new Tone.PolySynth(Tone.Synth).connect(this.limiter);
+        this.fm = new Tone.FMSynth().connect(this.limiter);
+        this.noise = new Tone.NoiseSynth(...).connect(this.limiter);
+        this.bass = new Tone.MonoSynth(...).connect(this.limiter);
+        
         this.synth = new Tone.PolySynth(Tone.Synth).toDestination();
         this.synth.set({ oscillator: { type: "triangle" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.05, release: 0.1 } });
         this.synth.volume.value = -12;
